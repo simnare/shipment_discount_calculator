@@ -4,12 +4,6 @@ import (
 	"time"
 )
 
-// Providers define all known system shipment providers
-var Providers = [2]Provider{"MR", "LP"}
-
-// Sizes define all known system shipment sizes
-var Sizes = [3]Size{"S", "M", "L"}
-
 // Provider defines provider title type
 type Provider string
 
@@ -17,6 +11,7 @@ type Provider string
 type Size string
 
 type Entry struct {
+	OriginalEntry []string
 	Date          time.Time
 	Provider      Provider
 	Size          Size
@@ -36,7 +31,6 @@ type PricesConfig struct {
 
 func NewPricesConfig() *PricesConfig {
 	return &PricesConfig{Prices: make(map[Provider]map[Size]float32)}
-
 }
 
 func (r *PricesConfig) Set(c PriceConfig) {
@@ -47,6 +41,14 @@ func (r *PricesConfig) Set(c PriceConfig) {
 	r.Prices[c.Provider][c.Size] = c.Price
 
 	return
+}
+
+func (r *PricesConfig) FindBasePrice(p Provider, s Size) *float32 {
+	if v, ok := r.Prices[p][s]; ok {
+		return &v
+	}
+
+	return nil
 }
 
 func isValidProvider(provider Provider) bool {

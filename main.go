@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/simnare/shipdisc/shipment"
 )
@@ -23,8 +24,11 @@ func main() {
 	defer file.Close()
 
 	sc := bufio.NewScanner(file)
+
+	entries := make([]shipment.Entry, 0)
 	for sc.Scan() {
-		fmt.Println(sc.Text())
+		params := strings.Split(sc.Text(), " ")
+		entries = append(entries, shipment.NewEntry(params...))
 	}
 
 	if err := sc.Err(); err != nil {
@@ -39,4 +43,7 @@ func main() {
 	shippingPrices.Set(shipment.PriceConfig{Provider: "MR", Size: "M", Price: 3})
 	shippingPrices.Set(shipment.PriceConfig{Provider: "MR", Size: "L", Price: 4})
 
+	for _, entry := range entries {
+		fmt.Println(entry.AsString())
+	}
 }
