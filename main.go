@@ -27,8 +27,7 @@ func main() {
 
 	entries := make([]shipment.Entry, 0)
 	for sc.Scan() {
-		params := strings.Split(sc.Text(), " ")
-		entries = append(entries, shipment.NewEntry(params...))
+		entries = append(entries, shipment.NewEntry(strings.Fields(sc.Text())...))
 	}
 
 	if err := sc.Err(); err != nil {
