@@ -8,8 +8,7 @@ import (
 )
 
 func NewEntry(props ...string) Entry {
-	e := Entry{}
-	e.OriginalEntry = props
+	e := Entry{OriginalEntry: props}
 
 	if len(props) < 2 {
 		log.Fatal("Shipment entry MUST have at least 2 params")
@@ -17,10 +16,10 @@ func NewEntry(props ...string) Entry {
 	}
 
 	e.Date, _ = time.Parse("2006-01-02", props[0])
-	e.Provider = Provider(props[1])
+	e.Size = Size(props[1])
 
 	if len(props) == 3 {
-		e.Size = Size(props[2])
+		e.Provider = Provider(props[2])
 	}
 
 	return e
@@ -30,10 +29,10 @@ func (e Entry) AsString() string {
 	entries := e.OriginalEntry
 
 	if e.Price != nil {
-		entries = append(entries, fmt.Sprintf("%0.2d", e.Price))
+		entries = append(entries, fmt.Sprintf("%0.2f", *e.Price))
 
 		if e.DiscountPrice != nil {
-			entries = append(entries, fmt.Sprintf("%0.2d", e.DiscountPrice))
+			entries = append(entries, fmt.Sprintf("%0.2f", *e.DiscountPrice))
 		} else {
 			entries = append(entries, "-")
 		}
