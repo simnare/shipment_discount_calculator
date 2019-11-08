@@ -27,21 +27,20 @@ func main() {
 	sc := bufio.NewScanner(file)
 
 	shippingPrices := shipment.NewPricesConfig()
-	shippingPrices.Set(shipment.PriceConfig{Provider: "LP", Size: "S", Price: 1.5})
-	shippingPrices.Set(shipment.PriceConfig{Provider: "LP", Size: "M", Price: 4.9})
-	shippingPrices.Set(shipment.PriceConfig{Provider: "LP", Size: "L", Price: 6.9})
-	shippingPrices.Set(shipment.PriceConfig{Provider: "MR", Size: "S", Price: 2})
-	shippingPrices.Set(shipment.PriceConfig{Provider: "MR", Size: "M", Price: 3})
-	shippingPrices.Set(shipment.PriceConfig{Provider: "MR", Size: "L", Price: 4})
+	shippingPrices.Set("S", "LP", 1.5)
+	shippingPrices.Set("M", "LP", 4.9)
+	shippingPrices.Set("L", "LP", 6.9)
+	shippingPrices.Set("S", "MR", 2)
+	shippingPrices.Set("M", "MR", 3)
+	shippingPrices.Set("L", "MR", 4)
 
 	pool := discount.NewPool(discount.NewCreditLimitGuard(10))
 	pool.Add(discount.NewPackageSizeMinimumPrice("S", *shippingPrices))
 	pool.Add(discount.NewNthPackageFreePerMonth("LP", "L", 3))
 
-	// var previous shipment.Entry
 	for sc.Scan() {
 		entry := shipment.NewEntry(strings.Fields(sc.Text())...)
-		entry.Price = shippingPrices.FindBasePrice(entry.Provider, entry.Size)
+		entry.Price = shippingPrices.Get(entry.Provider, entry.Size)
 
 		discount := pool.CalculateDiscount(entry)
 
@@ -50,8 +49,7 @@ func main() {
 			entry.DiscountPrice = &discount.Discount
 		}
 
-		fmt.Println(entry.AsString())
-		// previous = entry
+		fmt.Println(entry)
 	}
 
 	if err := sc.Err(); err != nil {
