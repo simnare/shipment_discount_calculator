@@ -7,12 +7,13 @@ import (
 	"time"
 )
 
+// NewEntry accepts slice of strings as fields to construct new shipment entry.
 func NewEntry(props ...string) Entry {
 	e := Entry{OriginalEntry: props}
 
 	if len(props) < 2 {
+		// TODO return error instead of fatal
 		log.Fatal("Shipment entry MUST have at least 2 params")
-		return e
 	}
 
 	e.Date, _ = time.Parse("2006-01-02", props[0])
@@ -25,7 +26,8 @@ func NewEntry(props ...string) Entry {
 	return e
 }
 
-func (e Entry) AsString() string {
+// String returns shipment entry as a string.
+func (e Entry) String() string {
 	entries := e.OriginalEntry
 
 	if e.Price != nil {

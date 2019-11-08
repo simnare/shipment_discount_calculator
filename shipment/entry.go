@@ -10,6 +10,7 @@ type Provider string
 // Size defines shipment size type
 type Size string
 
+// Entry represents single shipment entry.
 type Entry struct {
 	OriginalEntry []string
 	Date          time.Time
